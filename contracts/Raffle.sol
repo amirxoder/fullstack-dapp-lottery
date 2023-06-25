@@ -176,4 +176,28 @@ contract Raffle is VRFConsumerBaseV2, AutomationCompatible {
     function getRequestConfirmations() public pure returns (uint256) {
         return REQUEST_CONFIRMATIONS;
     }
+
+    function getInterval() public view returns (uint256) {
+        return i_interval;
+    }
+
+    function getGasLane() public view returns (bytes32) {
+        return i_gasLane;
+    }
+
+    function getSubId() public view returns (uint64) {
+        return i_subscribtionId;
+    }
+
+    function getCallbackGasLimit() public view returns (uint32) {
+        return i_callbackGasLimit;
+    }
+
+    function getVRFCoordinator()
+        public
+        view
+        returns (VRFCoordinatorV2Interface)
+    {
+        return i_vrfCoordinator;
+    }
 }

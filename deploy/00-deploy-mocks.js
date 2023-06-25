@@ -7,7 +7,6 @@ const GAS_PRICE_LINK = 1e9; // LINk per gas
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
-  const chainId = network.config.chainId;
 
   if (developmentChains.includes(network.name)) {
     log("Local network detected! Deploying mocks...");

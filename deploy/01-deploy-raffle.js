@@ -3,6 +3,8 @@ const {
   developmentChains,
   networkConfig,
 } = require("../helper-hardhat-config");
+const { verify } = require("../utils/verify");
+require("dotenv").config();
 
 const VRF_SUB_FUND_AMOUNT = ethers.utils.parseEther("2");
 
@@ -12,12 +14,11 @@ module.exports = async function ({
 }) {
   const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId;
-  let vrfCoordinatorV2Address, subscriptionId;
+  let vrfCoordinatorV2Address, subscriptionId, raffle, vrfCoordinatorV2Mocks;
 
   if (developmentChains.includes(network.name)) {
-    const vrfCoordinatorV2Mocks = await ethers.getContract(
-      "VRFCoordinatorV2Mock"
-    );
+    vrfCoordinatorV2Mocks = await ethers.getContract("VRFCoordinatorV2Mock");
+
     vrfCoordinatorV2Address = vrfCoordinatorV2Mocks.address;
     // create subscriptionId with code!
     const transactionResponse =
@@ -46,12 +47,28 @@ module.exports = async function ({
     gasLane,
     subscriptionId,
     callbackGasLimit,
+    interval,
   ];
 
-  const raffle = await deploy("Raffle", {
+  raffle = await deploy("Raffle", {
     from: deployer,
-    args,
+    args: args,
     log: true,
     waitConfirmations: network.config.blockConfirmations || 1,
   });
+
+  if (developmentChains.includes(network.name)) {
+    await vrfCoordinatorV2Mocks.addConsumer(subscriptionId, raffle.address);
+  }
+
+  if (
+    !developmentChains.includes(network.name) &&
+    process.env.ETHERSCAN_API_KEY
+  ) {
+    log("Verifying...");
+    await verify(raffle.address, args);
+  }
+  log("------------------------------------------------------------");
 };
+
+module.exports.tags = ["all", "raffle"];

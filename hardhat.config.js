@@ -35,4 +35,17 @@ module.exports = {
       blockConfirmations: 1,
     },
   },
+  etherscan: {
+    apiKey: {
+      sepolia: ETHERSCAN_API_KEY,
+    },
+  },
+  gasReporter: {
+    enable: false,
+    currency: "USD",
+    token: "MATIC",
+    outputFile: "./gas-reporter.txt",
+    noColors: true,
+    coinmarketcap: COINMARKETCAP_API_KEY,
+  },
 };
