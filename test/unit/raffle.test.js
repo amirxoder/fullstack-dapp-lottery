@@ -92,4 +92,49 @@ const { assert, expect } = require("chai");
           ).to.be.revertedWith("Raffle__NotOpen");
         });
       });
+
+      describe("checkUpKeep", () => {
+        it("returns false if people havent sent enough fund", async () => {
+          await network.provider.send("evm_increaseTime", [
+            interval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
+          assert(!upkeepNeeded);
+        });
+
+        it("returns false if raffle isn't open", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            interval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine", []);
+          await raffle.performUpkeep([]);
+          const raffleState = await raffle.getRaffleState();
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep([]);
+
+          assert.equal(raffleState, "1");
+          assert(!upkeepNeeded);
+        });
+
+        it("returns false if enough time has not passed", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            interval.toNumber() - 2,
+          ]);
+          await network.provider.request({ method: "evm_mine", params: [] });
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep("0x");
+          assert(!upkeepNeeded);
+        });
+
+        it("returns true if enough time has passed, has player and in open state ", async () => {
+          await raffle.enterRaffle({ value: raffleEntranceFee });
+          await network.provider.send("evm_increaseTime", [
+            interval.toNumber() + 1,
+          ]);
+          await network.provider.send("evm_mine");
+          const { upkeepNeeded } = await raffle.callStatic.checkUpkeep("0x");
+          assert(upkeepNeeded);
+        });
+      });
     });
