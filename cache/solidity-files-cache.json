@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "D:\\programming\\fcc-solidity\\hardhat-raffle\\contracts\\Raffle.sol": {
-      "lastModificationDate": 1687693178096,
+      "lastModificationDate": 1687784518277,
       "contentHash": "ddbb0997dd5a90c6c516b5c63f99084a",
       "sourceName": "contracts/Raffle.sol",
       "solcConfig": {
