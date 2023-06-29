@@ -228,7 +228,7 @@ const { assert, expect } = require("chai");
               raffle.once("WinnerPicked", async () => {
                 try {
                   const recentWinner = await raffle.getRecentWinner();
-                  console.log(recentWinner);
+                  console.log(`The winner of the lottery: ${recentWinner}`);
                   console.log(accounts[0].address);
                   console.log(accounts[1].address);
                   console.log(accounts[2].address);
